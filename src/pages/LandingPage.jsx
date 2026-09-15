@@ -18,10 +18,10 @@ const LandingPage = () => {
             </p>
 
             <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
-              <button  onClick={() => navigate("/login")} className="btn btn-info btn-lg rounded-pill px-5 fw-semibold text-dark">
+              <button  onClick={() => navigate("/login")} className="btn btn-info btn-lg rounded px-5 fw-semibold text-dark">
                 Login
               </button>
-              <button className="btn btn-outline-light btn-lg rounded-pill px-5 fw-semibold">
+              <button onClick={() => navigate("/register")} className="btn btn-outline-light btn-lg rounded px-5 fw-semibold">
                 Register
               </button>
             </div>

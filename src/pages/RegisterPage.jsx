@@ -3,8 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -15,21 +16,18 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
-        { username, password }
+        "http://localhost:8080/api/auth/register",
+        { username, email, password }
       );
 
-      const { token, username: loggedInUsername } = response.data;
+      console.log(response);
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("username", loggedInUsername);
-
-      toast.success("Signed in");
-      navigate("/home");
+      toast.success("Account created — sign in to continue");
+      navigate("/login");
     } catch (error) {
-      console.log("Login failed:", error);
+      console.log(error);
       toast.error(
-        error.response?.data?.message || "Invalid username or password"
+        error.response?.data?.message || "Could not create your account"
       );
     } finally {
       setSubmitting(false);
@@ -40,6 +38,8 @@ const LoginPage = () => {
     "w-full rounded-md border border-[#DFD9CC] bg-white px-3.5 py-2.5 text-[15px] " +
     "text-[#17122E] placeholder:text-[#A9A2B8] outline-none transition-colors " +
     "focus:border-[#D9541F] focus:ring-[3px] focus:ring-[#D9541F]/20";
+
+  const labelClass = "mb-1.5 block text-[13px] font-medium";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#17122E] p-6 font-[Archivo,ui-sans-serif,system-ui] text-[#2B2440] antialiased">
@@ -60,31 +60,44 @@ const LoginPage = () => {
           }
         >
           <span className="text-[11px] font-medium tracking-[0.24em] text-[#FBFAF6]/55 tabular-nums sm:rotate-180 sm:[writing-mode:vertical-rl]">
-            TICKETNEST · 0041
+            TICKETNEST · 0042
           </span>
         </aside>
 
         <section className="min-w-0 flex-1 px-6 pb-8 pt-7 sm:px-9 sm:py-10">
           <h1 className="text-[24px] font-semibold tracking-[-0.021em] text-[#17122E] sm:text-[27px]">
-            Welcome back
+            Create your account
           </h1>
           <p className="mb-7 mt-1.5 max-w-[34ch] text-[14.5px] leading-relaxed text-[#6F6885]">
-            Sign in to see your bookings and pick up where you left off.
+            One account for every show you book, saved in one place.
           </p>
 
           <form onSubmit={handleSubmit}>
             <div className="mb-[18px]">
-              <label
-                htmlFor="tn-username"
-                className="mb-1.5 block text-[13px] font-medium"
-              >
+              <label htmlFor="email" className={labelClass}>
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                className={inputClass}
+                placeholder="you@example.com"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-[18px]">
+              <label htmlFor="username" className={labelClass}>
                 Username
               </label>
               <input
-                id="tn-username"
+                id="username"
                 type="text"
                 className={inputClass}
-                placeholder="Enter your username"
+                placeholder="Pick a username"
                 autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -93,18 +106,16 @@ const LoginPage = () => {
             </div>
 
             <div className="mb-[18px]">
-              <label
-                htmlFor="tn-password"
-                className="mb-1.5 block text-[13px] font-medium"
-              >
+              <label htmlFor="password" className={labelClass}>
                 Password
               </label>
               <input
-                id="tn-password"
+                id="password"
                 type="password"
                 className={inputClass}
-                placeholder="Enter your password"
-                autoComplete="current-password"
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+                minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -116,17 +127,17 @@ const LoginPage = () => {
               disabled={submitting}
               className="mt-2.5 w-full rounded-md bg-[#D9541F] px-4 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-[#BF4715] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#17122E] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#D9541F]"
             >
-              {submitting ? "Signing in…" : "Sign in"}
+              {submitting ? "Creating account…" : "Create account"}
             </button>
           </form>
 
           <p className="mt-6 text-[13.5px] text-[#6F6885]">
-            No account yet?{" "}
+            Already have an account?{" "}
             <a
-              href="/register"
+              href="/login"
               className="border-b border-[#D9541F]/35 font-medium text-[#D9541F] hover:border-[#D9541F]"
             >
-              Create one
+              Sign in
             </a>
           </p>
         </section>
@@ -135,4 +146,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;
