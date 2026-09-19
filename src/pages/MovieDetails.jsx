@@ -110,7 +110,7 @@ const MovieDetails = () => {
     };
 
     const handleSelectShow = (show) => {
-        navigate(`/movies/${id}/book/${show.id || show._id}`);
+        navigate(`/movies/${id}/book/${show.id}`);
     };
 
     return (
