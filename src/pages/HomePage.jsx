@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { getMoviePosterUrl } from "../../services/fetchPoster";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
@@ -9,32 +10,46 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
 
-  useEffect(() => {
+useEffect(() => {
     const fetchMovies = async () => {
-      try {
-        const token = localStorage.getItem("token");
+        try {
+            const token = localStorage.getItem("token");
 
-        const response = await axios.get(
-          "http://localhost:8080/api/v1/movies",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+            const response = await axios.get(
+                "http://localhost:8080/api/v1/movies",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
 
-        setMovies(response.data);
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-        toast.error(error.response?.data?.message || "Could not load movies");
-      } finally {
-        setLoading(false);
-      }
+            const moviesWithPosters = await Promise.all(
+                response.data.map(async (movie) => {
+                    const posterUrl = await getMoviePosterUrl(movie.title);
+
+                    return {
+                        ...movie,
+                        posterUrl,
+                    };
+                })
+            );
+
+            setMovies(moviesWithPosters);
+            console.log(moviesWithPosters);
+
+        } catch (error) {
+            console.log(error);
+            toast.error(
+                error.response?.data?.message || "Could not load movies"
+            );
+        } finally {
+            setLoading(false);
+        }
     };
 
     fetchMovies();
-  }, []);
+}, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -96,9 +111,9 @@ const HomePage = () => {
                 className="group text-left"
               >
                 <div className="aspect-[2/3] w-full overflow-hidden rounded-lg bg-[#241C47] ring-1 ring-white/10 transition-shadow group-hover:ring-[#D9541F]/60">
-                  {movie.poster ? (
+                  {movie.posterUrl ? (
                     <img
-                      src={movie.poster}
+                      src={movie.posterUrl}
                       alt={movie.title || movie.name}
                       className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.03]"
                     />

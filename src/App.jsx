@@ -12,7 +12,7 @@ function App() {
     <Toaster />
     <Routes>
       <Route path='/' element={<LandingPage/>} ></Route>
-      <Route path="/movies/:id" element={<MovieDetails />} />
+      <Route path="/movies/:id" element={<MovieDetails />}/>
       <Route path='/login' element={<LoginPage/>}></Route>
       <Route path='/home' element={<HomePage/>}></Route>
       <Route path='/register' element={<RegisterPage/>}></Route>
