@@ -110,7 +110,13 @@ const MovieDetails = () => {
     };
 
     const handleSelectShow = (show) => {
-        navigate(`/movies/${id}/book/${show.id}`);
+        navigate(`/movies/${id}/book/${show.id}`, {
+            state: {
+                movieName: movie.title,
+                showDate: show.showDate,
+                showTime: show.startTime
+            }
+        });
     };
 
     return (
@@ -249,11 +255,6 @@ const MovieDetails = () => {
                                                             className="rounded-md border border-white/25 bg-[#241C47] px-4 py-2 text-sm font-medium text-white transition-colors hover:border-white/50 hover:bg-white/10"
                                                         >
                                                             {formatTime(show)}
-                                                            {show.theatre?.name && (
-                                                                <span className="ml-2 text-white/40">
-                                                                    · {show.theatre.name}
-                                                                </span>
-                                                            )}
                                                         </button>
                                                     ))}
                                             </div>
