@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import { FaRegSquare, FaCheckSquare } from "react-icons/fa";
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 
 const BookingPage = () => {
+    const navigate = useNavigate();
     const [tickets, setTickets] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -51,6 +52,23 @@ const BookingPage = () => {
         });
     };
 
+        const handleProceed = () => {
+        const selectedTickets = tickets.filter((t) =>
+            selectedSeats.includes(t.seatNumber)
+        );
+
+        navigate(`/shows/${showId}/confirm`, {
+            state: {
+                movieName,
+                showDate,
+                showTime,
+                selectedTickets,       // full ticket objects: id, seatNumber, price
+                
+            }
+        });
+    };
+  
+
     return (
         <div className="min-h-screen bg-[#17122E] font-[Archivo,ui-sans-serif,system-ui] text-white antialiased">
 
@@ -83,7 +101,7 @@ const BookingPage = () => {
             </div>
 
             <div className="flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-32">
-                
+
                 {/* Ticket Map */}
                 <div className="inline-flex flex-col items-center mb-10">
 
@@ -111,15 +129,20 @@ const BookingPage = () => {
                                     }
 
                                     const isSelected = selectedSeats.includes(seatLabel);
+                                    const isAvailable = ticket.status === "AVAILABLE";
+                                    const isBooked = ticket.status === "BOOKED";
 
                                     return (
                                         <button
                                             key={ticket.id}
-                                            onClick={() => handleSeatClick(seatLabel)}
-                                            title={seatLabel}
-                                            className={`flex h-7 w-7 items-center justify-center rounded-md text-[13px] transition-colors ${isSelected
-                                                ? "text-[#D9541F]"
-                                                : "text-white/50 hover:text-white"
+                                            onClick={() => isAvailable && handleSeatClick(seatLabel)}
+                                            disabled={!isAvailable}
+                                            title={isBooked ? `${seatLabel} (Booked)` : seatLabel}
+                                            className={`flex h-7 w-7 items-center justify-center rounded-md text-[13px] transition-colors ${isBooked
+                                                    ? "text-red-500/50 cursor-not-allowed"
+                                                    : isSelected
+                                                        ? "text-[#D9541F] cursor-pointer"
+                                                        : "text-white/50 hover:text-white cursor-pointer"
                                                 }`}
                                         >
                                             {isSelected ? (
@@ -153,7 +176,7 @@ const BookingPage = () => {
                                     </span>
                                 ))}
                             </div>
-                            <button onClick={() => setShowConfirm(true)} className="mt-3 rounded-md bg-[#D9541F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#e66a38]">
+                            <button onClick={handleProceed} className="mt-3 rounded-md bg-[#D9541F] px-4 py-2 text-sm font-semibold text-white hover:bg-[#e66a38]">
                                 Proceed
                             </button>
                         </>
