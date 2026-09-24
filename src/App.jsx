@@ -7,12 +7,13 @@ import RegisterPage from './pages/RegisterPage';
 import MovieDetails from './pages/MovieDetails';
 import BookingPage from './pages/BookingPage';
 import ConfirmPage from './pages/ConfirmPage';
-
+import MyBookingsPage from './pages/MyBookingsPage';
 function App() {
   return (
     <>
     <Toaster />
     <Routes>
+      <Route path='/myBookings' element={<MyBookingsPage/>}></Route>
       <Route path='/' element={<LandingPage/>} ></Route>
       <Route path="/movies/:id" element={<MovieDetails />}/>
       <Route path='/shows/:showId/confirm' element={<ConfirmPage/>}></Route>

@@ -10,46 +10,50 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
 
-useEffect(() => {
+  useEffect(() => {
     const fetchMovies = async () => {
-        try {
-            const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
 
-            const response = await axios.get(
-                "http://localhost:8080/api/v1/movies",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/movies",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-            const moviesWithPosters = await Promise.all(
-                response.data.map(async (movie) => {
-                    const posterUrl = await getMoviePosterUrl(movie.title);
+        const moviesWithPosters = await Promise.all(
+          response.data.map(async (movie) => {
+            const posterUrl = await getMoviePosterUrl(movie.title);
 
-                    return {
-                        ...movie,
-                        posterUrl,
-                    };
-                })
-            );
+            return {
+              ...movie,
+              posterUrl,
+            };
+          })
+        );
 
-            setMovies(moviesWithPosters);
-            console.log(moviesWithPosters);
+        setMovies(moviesWithPosters);
+        console.log(moviesWithPosters);
 
-        } catch (error) {
-            console.log(error);
-            toast.error(
-                error.response?.data?.message || "Could not load movies"
-            );
-        } finally {
-            setLoading(false);
-        }
+      } catch (error) {
+        console.log(error);
+        toast.error(
+          error.response?.data?.message || "Could not load movies"
+        );
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchMovies();
-}, []);
+  }, []);
+
+  const handleMyBookings = () =>{
+    navigate("/myBookings");
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -62,20 +66,33 @@ useEffect(() => {
 
       {/* Header */}
       <header className="flex items-center justify-between border-b border-white/10 px-6 py-5 sm:px-10">
-        <span className="text-lg font-bold tracking-[-0.01em]">
-          TicketNest
-        </span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-white/60">
-            Hi, <span className="text-white">{username || "there"}</span>
-          </span>
+        <div>
+          <div className="text-lg font-bold tracking-[-0.01em]">
+            TicketNest
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-white/60">
+              Hi, <span className="text-white">{username || "there"}</span>
+            </span>
+          </div>
+        </div>
+
+
+        <div className="flex justify-between">
+          <button onClick={handleMyBookings} className="mr-5 bg-orange-600 rounded-md border border-white/25 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:border-white/50 hover:bg-white hover:text-black">
+            My Bookings
+          </button>
           <button
             onClick={handleLogout}
             className="rounded-md border border-white/25 px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:border-white/50 hover:bg-white/5"
           >
             Log out
           </button>
+
         </div>
+
+
       </header>
 
       <main className="px-6 py-10 sm:px-10">
